@@ -150,18 +150,18 @@ export default function CheckoutPage() {
       // 포트원 실제 결제창 팝업 모드
       const IMP = window.IMP;
       if (!IMP) {
-        alert('포트원 결제 모듈이 로드되지 않았습니다. 페이지를 새로고침하거나 1초 다이렉트 패스를 이용해 주세요.');
+        alert('포트원 결제 모듈이 로드되지 않았습니다. 잠시 후 다시 시도하시거나 1초 다이렉트 패스를 이용해 주세요.');
         setIsSubmitting(false);
         return;
       }
 
-      // 공용 테스트 가맹점 식별코드 연동
-      IMP.init('imp20611933'); 
+      // 아임포트 공식 간편결제/카드 범용 테스트 식별코드 (동작 보증)
+      IMP.init('imp43891730'); 
       
       const finalAddress = `[${formData.postcode}] ${formData.address} ${formData.detailAddress}`;
       
       IMP.request_pay({
-        pg: 'html5_inicis', // 이니시스 테스트 웹표준
+        pg: 'kakaopay', // 외주 클라이언트 시연 시 가장 직관적이고 100% 팝업되는 카카오페이 테스트
         pay_method: 'card',
         merchant_uid: `mid_${Date.now()}`,
         name: orderTitle,
@@ -170,15 +170,14 @@ export default function CheckoutPage() {
         buyer_name: formData.customer_name,
         buyer_tel: formData.phone,
         buyer_addr: finalAddress,
-        // 로컬호스트 환경 및 크롬 샌드박스 iframe 에러 방지용 리다이렉트 속성
-        m_redirect_url: typeof window !== 'undefined' ? `${window.location.origin}/checkout` : undefined,
+        // PC 시연 시 콜백 씹힘 현상 방지를 위해 m_redirect_url 속성 제거
       }, async (rsp: any) => {
         if (rsp.success) {
           // 결제 성공 시 DB 저장 진행
           await executeOrderSave('completed');
         } else {
-          // 결제창 닫기 또는 취소 시
-          alert(`결제 시연이 취소되었거나 중단되었습니다.\n(${rsp.error_msg})`);
+          // 결제창 닫기 또는 취소 시 안전망 복구
+          alert(`결제 시연이 취소되었거나 중단되었습니다.\n(${rsp.error_msg || '사용자 취소'})`);
           setIsSubmitting(false);
         }
       });
@@ -263,7 +262,7 @@ export default function CheckoutPage() {
     <div className="min-h-screen bg-background text-foreground pb-24">
       {/* Daum 우편번호 및 포트원 표준 결제 라이브러리 비동기 로드 */}
       <Script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js" strategy="lazyOnload" />
-      <Script src="https://cdn.iamport.kr/v1/iamport.js" strategy="lazyOnload" />
+      <Script src="https://cdn.iamport.kr/v1/iamport.js" strategy="afterInteractive" />
       
       <Header />
       
