@@ -254,20 +254,3 @@ export default async function AdminDashboardPage() {
     </div>
   );
 }
- || products.length === 0) && (
-                      <TableRow>
-                        <TableCell colSpan={6} className="h-40 text-center text-muted-foreground">
-                          등록된 상품이 없습니다.
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </TableBody>
-                </Table>
-              </div>
-            </div>
-          </TabsContent>
-        </Tabs>
-      </main>
-    </div>
-  );
-}
