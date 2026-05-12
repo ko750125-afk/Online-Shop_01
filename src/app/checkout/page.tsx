@@ -155,13 +155,13 @@ export default function CheckoutPage() {
         return;
       }
 
-      // 아임포트 공식 간편결제/카드 범용 테스트 식별코드 (동작 보증)
-      IMP.init('imp43891730'); 
+      // 아임포트 공식 문서 표준 테스트 가맹점 식별코드 연동
+      IMP.init('imp14397622'); 
       
       const finalAddress = `[${formData.postcode}] ${formData.address} ${formData.detailAddress}`;
       
       IMP.request_pay({
-        pg: 'kakaopay', // 외주 클라이언트 시연 시 가장 직관적이고 100% 팝업되는 카카오페이 테스트
+        // pg 파라미터를 생략하여 가맹점 계정에 연동된 Default PG사 결제창을 스마트하게 자동 오픈
         pay_method: 'card',
         merchant_uid: `mid_${Date.now()}`,
         name: orderTitle,
